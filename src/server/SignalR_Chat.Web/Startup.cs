@@ -16,6 +16,10 @@ namespace SignalR_Chat.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Adicionando suporte ao SignalR
+            services.AddSignalR();
+
             services.AddMvc();
         }
 
@@ -26,6 +30,12 @@ namespace SignalR_Chat.Web
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Configuro os hubs do SignalR
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chathub");
+            });
 
             app.UseMvc();
         }
