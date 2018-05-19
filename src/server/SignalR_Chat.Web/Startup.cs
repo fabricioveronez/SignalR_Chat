@@ -21,6 +21,12 @@ namespace SignalR_Chat.Web
             services.AddSignalR();
 
             services.AddMvc();
+
+            // Configuro Cross-Origin
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -30,6 +36,8 @@ namespace SignalR_Chat.Web
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseCors("CorsPolicy");
 
             // Configuro os hubs do SignalR
             app.UseSignalR(routes =>
