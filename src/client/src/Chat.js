@@ -14,7 +14,7 @@ class Chat extends Component {
 
     this.conexao = new HubConnectionBuilder().withUrl('http://localhost:5000/chatHub').build();
 
-    this.conexao.on("ReceiveMessage", (dado) => { 
+    this.conexao.on("RecebendoMensagem", (dado) => { 
       let conversa = this.state.conversa;
       conversa.push(dado);
       this.setState({conversa});
@@ -32,6 +32,7 @@ class Chat extends Component {
   enviarMensagem(e) {
     e.preventDefault();
     this.conexao.invoke('EnviarMensagem', {nome: this.state.nome, msg: this.state.mensagem});
+    this.setState({mensagem:''})
   }
   
   render() {
@@ -42,20 +43,20 @@ class Chat extends Component {
               <div className="row">
                   <div className="message-wrap col-lg-12">
                   {this.state.conversa.map(item => (
-                    <div className="msg-wrap">                                                                  
+                    <div key={item.nome + item.msg} className="msg-wrap">                                                                  
                       <div className="media-body">
-                          <h5 className="media-heading">Fulano de Tal</h5>
-                          <small>Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.</small>
+                          <h5 className="media-heading">{item.nome}</h5>
+                          <small>{item.msg}</small>
                       </div>
                     </div>
                   ))}                    
                     <div className="send-wrap ">
-                      <div className="input-group mb-3">
-                        <input type="text" class="form-control" />
+                      <form onSubmit={e => this.enviarMensagem(e)} className="input-group mb-3">
+                        <input type="text" value={this.state.mensagem} className="form-control" onChange={e => this.setValue('mensagem', e)} />
                           <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button">Enviar</button>
+                            <button className="btn btn-outline-secondary" type="submit">Enviar</button>
                           </div>
-                      </div>            
+                      </form>            
                     </div>                  
                   </div>
               </div>
