@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { HubConnectionBuilder } from '@aspnet/signalr';
 import './Chat.css';
+import {adicionarMensagem } from './acoes/chat.acao';
+import { connect } from 'react-redux';
 
 class Chat extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.conexao = {};
-    this.state = {mensagem: '', nome: '', conversa:[]};
+    this.state = {mensagem: '', nome: ''};
   }
   
   componentDidMount() {
@@ -15,9 +17,7 @@ class Chat extends Component {
     this.conexao = new HubConnectionBuilder().withUrl('http://localhost:5000/chatHub').build();
 
     this.conexao.on("RecebendoMensagem", (dado) => { 
-      let conversa = this.state.conversa;
-      conversa.push(dado);
-      this.setState({conversa});
+      this.props.adicionarMensagem(dado);
     }); 
     
     this.conexao.start().catch(err => console.error(err.toString()));
@@ -36,13 +36,14 @@ class Chat extends Component {
   }
   
   render() {
+    
     return (
           <div>
             <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" />
             <div className="container">
               <div className="row">
                   <div className="message-wrap col-lg-12">
-                  {this.state.conversa.map(item => (
+                  {this.props.mensagensChat.map(item => (
                     <div key={item.nome + item.msg} className="msg-wrap">                                                                  
                       <div className="media-body">
                           <h5 className="media-heading">{item.nome}</h5>
@@ -66,4 +67,21 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+
+
+const mapStateToProps = state => {
+  return { mensagensChat : state.chat }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    adicionarMensagem : (mensagem) => {
+      dispatch(adicionarMensagem(mensagem));     
+    }
+  }
+}
+
+const ChatContainer = connect(mapStateToProps,mapDispatchToProps)(Chat);
+
+
+export default ChatContainer;
