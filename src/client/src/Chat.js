@@ -25,8 +25,8 @@ class Chat extends Component {
     this.setState({nome});
   }
 
-  setValue(nomePropriedade, e) {
-    this.setState({[nomePropriedade]: e.target.value });
+  obterMensagem(e) {
+    this.setState({mensagem: e.target.value });
   }
 
   enviarMensagem(e) {
@@ -53,7 +53,7 @@ class Chat extends Component {
                   ))}                    
                     <div className="send-wrap ">
                       <form onSubmit={e => this.enviarMensagem(e)} className="input-group mb-3">
-                        <input type="text" value={this.state.mensagem} className="form-control" onChange={e => this.setValue('mensagem', e)} />
+                        <input type="text" value={this.state.mensagem} className="form-control" onChange={e => this.obterMensagem(e)} />
                           <div className="input-group-append">
                             <button className="btn btn-outline-secondary" type="submit">Enviar</button>
                           </div>
