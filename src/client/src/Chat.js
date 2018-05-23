@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { HubConnectionBuilder } from '@aspnet/signalr';
 import './Chat.css';
-import {adicionarMensagem } from './acoes/chat.acao';
+import { adicionarMensagem } from './acoes/chat.acao';
 import { connect } from 'react-redux';
 
 class Chat extends Component {
@@ -14,14 +14,19 @@ class Chat extends Component {
   
   componentDidMount() {
 
-    this.conexao = new HubConnectionBuilder().withUrl('http://localhost:5000/chatHub').build();
+    // Crio a instância do Hub de conexão do SignalR
+    this.conexao = new HubConnectionBuilder()
+      .withUrl('http://localhost:5000/chatHub').build();
 
+    // Trato o recebimento da mensagem.
     this.conexao.on("RecebendoMensagem", (dado) => { 
       this.props.adicionarMensagem(dado);
     }); 
     
+    // Inicio a conexão.
     this.conexao.start().catch(err => console.error(err.toString()));
     let nome = prompt('Entre com o seu nome:');
+    // Armazeno o nome no state.
     this.setState({nome});
   }
 
@@ -31,6 +36,7 @@ class Chat extends Component {
 
   enviarMensagem(e) {
     e.preventDefault();
+    // Invoco o método EnviarMensagem no lado do servidor.
     this.conexao.invoke('EnviarMensagem', {nome: this.state.nome, msg: this.state.mensagem});
     this.setState({mensagem:''})
   }
